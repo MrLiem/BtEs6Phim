@@ -1,0 +1,10 @@
+[
+    { "maSP": "sp_1", "tenSP": "iphoneX", "gia": 3000, "hinhAnh": "./assets/img/sp_iphoneX.png"
+    },
+    { "maSP": "sp_2", "tenSP": "Note 7", "gia": 2000,   "hinhAnh": "./assets/img/sp_note7.png"
+    },
+    { "maSP": "sp_3", "tenSP": "Vivo", "gia": 1000, "hinhAnh": "./assets/img/sp_vivo850.png"
+    },
+    { "maSP": "sp_4", "tenSP": "Blacberry", "gia": 1500,  "hinhAnh": "./assets/img/sp_blackberry.png"
+    }
+]
