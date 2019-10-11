@@ -26,6 +26,7 @@ const renderTable = () => {
                 </div>
                 <br />
                 <button class="btn btn-success" id="btnThemSanPham" >Thêm sản phẩm</button>
+                <button class="btn btn-success" id="btnTimSanPham">Tìm sản phẩm</button>
             </div>
         </div>
     </div>
@@ -33,9 +34,9 @@ const renderTable = () => {
         <table class="table">
             <thead>
                 <tr>
-                    <th>Mã SP</th>
-                    <th>Tên SP</th>
-                    <th>Giá </th>
+                    <th>Mã SP<button class="btn btn-light" id="sortMaSP">⇵</button></th>
+                    <th>Tên SP<button class="btn btn-light" id="sortTenSP">⇵</button></th>
+                    <th>Giá <button class="btn btn-light" id="sortGia">⇵</button></th>
                     <th>Hình ảnh</th>
                     <th></th>
                 </tr>
@@ -72,6 +73,7 @@ axios({
 
 document.getElementById('btnThemSanPham').onclick = function() {
 
+    document.getElementById('btnTimSanPham').removeAttribute('disabled');
     let checkButton = document.getElementById('btnThemSanPham').innerHTML;
     if (checkButton === "Thêm sản phẩm") {
 
@@ -121,7 +123,6 @@ document.getElementById('btnThemSanPham').onclick = function() {
 
         let sanPham = new SanPham(_maSP, _tenSP, _gia, _hinhAnh);
 
-        dsSanPham = new DanhSachSanPham();
         dsSanPham.dssp = layStorage();
 
 
@@ -139,11 +140,52 @@ document.getElementById('btnThemSanPham').onclick = function() {
         luuStorage(dsSanPham.dssp);
         //renderlaiTable
         renderTRSanPham(dsSanPham.dssp);
-
         //clear Text
         clearText();
 
+        document.getElementById('btnTimSanPham').innerHTML = "Tìm sản phẩm";
+
+
+
     }
+}
+
+document.getElementById('btnTimSanPham').onclick = function() {
+
+    let textButton = document.getElementById('btnTimSanPham').innerHTML;
+    if (textButton === "Tìm sản phẩm") {
+        let _maSP = document.getElementById('maSP').value;
+        let _tenSP = document.getElementById('tenSP').value;
+        let _gia = document.getElementById('gia').value;
+        let _hinhAnh = document.getElementById('hinhAnh').value;
+
+        dsSanPham.dssp = layStorage();
+
+        // tìm kiếm trong danh sách nếu trùng 1 trong điều kiện thì chọn
+        let dsTimKiem = dsSanPham.dssp.filter(el =>
+            (el.maSP === _maSP && _maSP !== "") || (el.tenSP === _tenSP && _tenSP !== "") || (el.gia === _gia && _gia !== "") || (el.hinhAnh === _hinhAnh && _hinhAnh !== "")
+        );
+
+        if (dsTimKiem.length === 0) {
+            alert("Không có thông tin về sản phẩm");
+            return;
+        }
+        renderTRSanPham(dsTimKiem);
+        document.getElementById('btnThemSanPham').setAttribute("disabled", "disabled");
+        document.getElementById('btnTimSanPham').innerHTML = "Show full list"
+        clearText();
+    }
+    // là button Quay lại
+    else {
+        document.getElementById('btnThemSanPham').removeAttribute('disabled');
+        document.getElementById('btnTimSanPham').innerHTML = "Tìm sản phẩm";
+        renderTRSanPham(dsSanPham.dssp);
+    }
+
+
+
+
+
 }
 
 function clearText() {
@@ -188,8 +230,8 @@ function layStorage() {
 
 
 window.editInfo = function editInfo(maSp) {
+    document.getElementById('btnThemSanPham').removeAttribute("disabled");
     dsSanPham = layStorage();
-
 
     // duyệt mảng dsSanPham lấy phần tử có  el.MaSp=maSp 
     let sanPham = dsSanPham.filter(el =>
@@ -205,11 +247,12 @@ window.editInfo = function editInfo(maSp) {
 
     document.getElementById('btnThemSanPham').innerHTML = "Chỉnh sửa thông tin";
     document.getElementById('maSP').setAttribute("disabled", "disabled");
-
+    document.getElementById('btnTimSanPham').setAttribute("disabled", "disabled");
 
 }
 
 window.deleteInfo = function deleteInfo(maSp) {
+    document.getElementById('btnThemSanPham').removeAttribute("disabled");
     dsSanPham.dssp = layStorage();
 
     // tìm ra item cần delete
@@ -224,15 +267,44 @@ window.deleteInfo = function deleteInfo(maSp) {
     // render lại table
     renderTRSanPham(dsSanPham.dssp);
 
-    // đề phòng TH bấm chỉnh sửa rồi bấm xóa
+
     document.getElementById('maSP').removeAttribute('disabled');
     clearText();
+
+    document.getElementById('btnTimSanPham').innerHTML = "Tìm sản phẩm";
+    document.getElementById('btnTimSanPham').removeAttribute('disabled');
+
 }
 
 
+document.getElementById('sortMaSP').onclick = function() {
+    dsSanPham.dssp = layStorage();
+
+    dsSanPham.dssp = dsSanPham.dssp.sort((a, b) =>
+        a.maSP.localeCompare(b.maSP)
+    );
+
+    renderTRSanPham(dsSanPham.dssp);
+}
 
 
+document.getElementById('sortTenSP').onclick = function() {
+    dsSanPham.dssp = layStorage();
 
+    dsSanPham.dssp = dsSanPham.dssp.sort((a, b) =>
+        a.tenSP.localeCompare(b.tenSP)
+    );
+
+    renderTRSanPham(dsSanPham.dssp);
+}
+
+document.getElementById('sortGia').onclick = function() {
+    dsSanPham.dssp = layStorage();
+
+    dsSanPham.dssp = dsSanPham.dssp.sort((a, b) => a.gia - b.gia);
+
+    renderTRSanPham(dsSanPham.dssp);
+}
 
 
 //  npm[ten thu vien]: lenh tai thu vien
